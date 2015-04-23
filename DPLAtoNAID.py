@@ -1,4 +1,4 @@
-import requests, json, argparse, datetime, csv
+import requests, json, argparse, datetime, csv, time
 
 logfile = 'NAIDtoDPLA.csv'
 
@@ -19,9 +19,15 @@ with open(logfile, 'w') as log :
 
 while count > page :
 
-	r = json.loads(requests.get(url + '&page=' + str(page)).text)
+	try:
+		r = json.loads(requests.get(url + '&page=' + str(page)).text)
+	except requests.exceptions.ConnectionError :
+		print requests.get(url).status_code
+		print requests.get(url).headers
+		time.sleep(60)
+		
 	number = 0
-	
+		
 	while number < 500 :
 	
 		with open(logfile, 'a') as log :
